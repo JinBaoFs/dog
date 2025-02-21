@@ -14,6 +14,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAccount, useAccountEffect, useSignMessage } from 'wagmi';
 import { Hash, isAddress, isAddressEqual } from 'viem';
 import useSWR from 'swr';
+import { useSearchParams } from 'next/navigation';
 import { ajaxGet, ajaxPost } from '@/api/axios';
 import {
   useUserSignIn,
@@ -27,7 +28,7 @@ import { axiosUrlType } from '@/api/type';
 import { UserInfoType } from '@/types/global';
 import Modal from '../Modal';
 
-const SignMessageStr = 'Welcome to DOG WORLD';
+const SignMessageStr = 'Welcome to DIALECT WORLD';
 
 const AuthModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -47,9 +48,13 @@ const AuthModal = () => {
   const bindModalStatus = useBindModalStatus();
   const updateBindStatux = useUpdateBindModalStatus();
   const toast = useToast();
+  const searchParams = useSearchParams();
   const { data } = useSWR<UserInfoType>(
     userInfo ? 'getUserInfo' : '',
-    (url: any) => ajaxGet(url as axiosUrlType)
+    (url: any) => ajaxGet(url as axiosUrlType),
+    {
+      refreshInterval: 4000
+    }
   );
   const t = useTranslations('Common');
   useEffect(() => {
@@ -68,8 +73,12 @@ const AuthModal = () => {
 
   const invateCode = useMemo(() => {
     if (typeof localStorage === 'undefined') return '';
-    return localStorage ? localStorage.getItem('invateCode') : '';
-  }, []);
+    return searchParams.get('invateCode')
+      ? searchParams.get('invateCode')
+      : localStorage
+      ? localStorage.getItem('invateCode')
+      : '';
+  }, [searchParams]);
 
   const [account, setAccount] = useState<Hash>(invateCode as Hash);
 
@@ -210,7 +219,7 @@ const AuthModal = () => {
       <Modal
         autoFocus={false}
         closeOnOverlayClick={false}
-        header={t('welcome to DOG World')}
+        header={t('welcome to DIALECT World')}
         isOpen={isOpen}
         modalIcon="/assets/img/welcome.png"
         modalTip={t(

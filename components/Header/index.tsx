@@ -28,9 +28,9 @@ const Header = () => {
     >
       <Image
         alt=""
-        h={'24px'}
-        src="/assets/img/logo.png"
-        w={'64px'}
+        h={'40px'}
+        src="/assets/img/logo.png?1.0.0"
+        w={'40px'}
       />
       <ConnectButton />
     </Center>

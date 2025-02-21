@@ -5,6 +5,7 @@ import {
   BoxProps,
   Button,
   Center,
+  Divider,
   Flex,
   Image,
   Input,
@@ -20,10 +21,11 @@ import Tooltip from '@/components/Tooltip';
 import IconSvg from '@/components/IconSvg';
 import ChakraMotionBox from '@/components/ChakraMotionBox';
 
-import { formatNumber } from '@/lib';
+import { formatNumber, formatNumberToK } from '@/lib';
 import useSwap from '@/hooks/useSwap';
 import { ApproveState } from '@/hooks/useApproveCallback';
-import KLineChart from './KLineChart';
+import { TOKEN_SYMBOL } from '@/constants';
+// import KLineChart from './KLineChart';
 
 const AnimateBox = ({
   children,
@@ -66,10 +68,8 @@ const Mint = () => {
   const commonT = useTranslations('Common');
 
   const [flag, setFlag] = useBoolean();
-
   const {
     getVal,
-    price,
     btnStatus,
     handApprove,
     handleBtn,
@@ -81,7 +81,8 @@ const Mint = () => {
     balanceOf,
     approvalState,
     quota,
-    onChangePrice
+    tokenInfo,
+    configData
   } = useSwap();
 
   return (
@@ -91,8 +92,33 @@ const Mint = () => {
         pt={'92px'}
         px={'5'}
       >
-        <KLineChart onChangePrice={onChangePrice} />
+        <Flex
+          flexDir={'column'}
+          fontSize={'sm'}
+          gap={2}
+        >
+          <Flex justify={'space-between'}>
+            <Box>{TOKEN_SYMBOL}</Box>
+            <Box>
+              {formatNumberToK(`${tokenInfo.USDT}`)} USDT/
+              {formatNumberToK(`${tokenInfo.Token}`)} {TOKEN_SYMBOL}
+            </Box>
+          </Flex>
+          <Flex justify={'space-between'}>
+            <Box>
+              {t('Circulating Supply')}: {tokenInfo.circulation}
+            </Box>
+            <Box>
+              {t('Market Cap')}: ${tokenInfo.market}
+            </Box>
+          </Flex>
+        </Flex>
 
+        {/* <KLineChart onChangePrice={onChangePrice} /> */}
+        <Divider
+          borderColor={'whiteAlpha.300'}
+          my={5}
+        />
         <Center
           color={'whiteAlpha.400'}
           fontSize={'md'}
@@ -105,14 +131,14 @@ const Mint = () => {
             onClick={() => setIndex(0)}
             transitionDuration={'normal'}
           >
-            {t('Buy DOG')}
+            {t('Buy DIALECT', { name: TOKEN_SYMBOL })}
           </Box>
           <Box
             color={index === 1 ? 'white' : ''}
             onClick={() => setIndex(1)}
             transitionDuration={'normal'}
           >
-            {t('Sell DOG')}
+            {t('Sell DIALECT', { name: TOKEN_SYMBOL })}
           </Box>
         </Center>
 
@@ -174,7 +200,7 @@ const Mint = () => {
                   keyStr={`${index}`}
                   scale={0.2}
                 >
-                  <Box fontSize={'md'}>{index ? 'DOG' : 'USDT'}</Box>
+                  <Box fontSize={'md'}>{index ? TOKEN_SYMBOL : 'USDT'}</Box>
                 </AnimateBox>
               </Flex>
             </Flex>
@@ -221,9 +247,15 @@ const Mint = () => {
                 >
                   <>
                     {!flag ? (
-                      <Box>{formatNumber(`${price}`)} USDT/DOG</Box>
+                      <Box>
+                        {formatNumber(`${+tokenInfo.USDT / +tokenInfo.Token}`)}{' '}
+                        USDT/{TOKEN_SYMBOL}
+                      </Box>
                     ) : (
-                      <Box>{formatNumber(`${1 / price}`)} DOG/USDT</Box>
+                      <Box>
+                        {formatNumber(`${+tokenInfo.Token / +tokenInfo.USDT}`)}{' '}
+                        {TOKEN_SYMBOL}/USDT
+                      </Box>
                     )}
                   </>{' '}
                   <IconSvg
@@ -246,7 +278,8 @@ const Mint = () => {
                     {formatNumber(formatEther(quota || 0n))} USDT
                     <Tooltip
                       label={t(
-                        'Buying DOG will consume the equivalent amount of USDT'
+                        'Buying DIALECT will consume the equivalent amount of USDT',
+                        { name: TOKEN_SYMBOL }
                       )}
                     ></Tooltip>
                   </Flex>
@@ -264,7 +297,7 @@ const Mint = () => {
                   onClick={handApprove}
                   variant={'outline'}
                 >
-                  {commonT('Aprrove')}
+                  {commonT('Approve')}
                 </Button>
               ) : (
                 <></>
@@ -297,11 +330,20 @@ const Mint = () => {
                       {t('Expected receive LP computing power')}:{' '}
                       <Tooltip
                         label={t(
-                          'Get the equivalent LP computing power invested in USDT'
+                          'Get the equivalent LP computing power invested in USDT',
+                          {
+                            rate: configData?.buy_coin_rate
+                              ? +configData?.buy_coin_rate * 100
+                              : '0'
+                          }
                         )}
                       ></Tooltip>
                     </Flex>
-                    <Box>{val || '--'}</Box>
+                    <Box>
+                      {val && configData?.buy_coin_rate
+                        ? formatNumber(String(+val * +configData.buy_coin_rate))
+                        : val || '--'}
+                    </Box>
                   </Flex>
                   <Flex
                     justify={'space-between'}
@@ -311,10 +353,11 @@ const Mint = () => {
                       align={'center'}
                       gap={2}
                     >
-                      {t('Expected receive DOG')}:{' '}
+                      {t('Expected receive DIALECT', { name: TOKEN_SYMBOL })}:{' '}
                       <Tooltip
                         label={t(
-                          'Get the input of USDT 33% equivalent DOG quantity'
+                          'Get the input of USDT 33% equivalent DIALECT quantity',
+                          { name: TOKEN_SYMBOL }
                         )}
                       ></Tooltip>
                     </Flex>
@@ -332,7 +375,9 @@ const Mint = () => {
                   >
                     {t('Expected receive USDT')}:{' '}
                     <Tooltip
-                      label={t('Get 85% of the sold value USDT')}
+                      label={t('Get 85% of the sold value USDT', {
+                        rate: configData?.sell_rate
+                      })}
                     ></Tooltip>
                   </Flex>
                   <Box>{+formatNumber(getVal) || '--'}</Box>

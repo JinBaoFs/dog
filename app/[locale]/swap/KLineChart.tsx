@@ -1,10 +1,12 @@
+'use client';
 import { Box, Flex } from '@chakra-ui/react';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { init, Chart as KLineChartType } from 'klinecharts';
+import klinecharts, { init, Chart as KLineChartType } from 'klinecharts';
 // import * as echarts from "echarts";
 import 'echarts/lib/component/markLine';
 import { formatNumber } from '@/lib';
 import { DECIMAL } from '@/constants';
+import { useLanguage } from '@/components/Language';
 
 interface HistoryData {
   close: string;
@@ -84,6 +86,7 @@ const KLineChart = ({
 }: {
   onChangePrice: (price: number) => void;
 }) => {
+  const { currentLang } = useLanguage();
   const main = useRef<HTMLDivElement>(null);
   const [type, setType] = useState<SubType>('hour');
   const [chart, setChart] = useState<KLineChartType | null>();
@@ -134,6 +137,36 @@ const KLineChart = ({
 
   useEffect(() => {
     if (main.current && !chart) {
+      (klinecharts as any).registerLocale('zh-Hant', {
+        time: '時間：',
+        open: '開：',
+        high: '高：',
+        low: '低：',
+        close: '收：',
+        volume: '成交量：',
+        turnover: '成交額：',
+        change: '漲幅：'
+      });
+      (klinecharts as any).registerLocale('ja', {
+        time: '時間：',
+        open: '始値：',
+        high: '高値：',
+        low: '安値：',
+        close: '終値：',
+        volume: '出来高：',
+        turnover: '取引額：',
+        change: '変化率：'
+      });
+      (klinecharts as any).registerLocale('ko', {
+        time: '시간：',
+        open: '시가：',
+        high: '고가：',
+        low: '저가：',
+        close: '종가：',
+        volume: '거래량：',
+        turnover: '거래대금：',
+        change: '변동률：'
+      });
       const _chart = init(main.current, {
         styles: {
           grid: {
@@ -168,7 +201,9 @@ const KLineChart = ({
           }
         }
       } as any);
+
       _chart?.setPriceVolumePrecision(DECIMAL, DECIMAL);
+      (_chart as any)?.setLocale(currentLang.path);
       setChart(_chart);
       handChangeType(type);
     }
@@ -204,7 +239,16 @@ const KLineChart = ({
     return () => {
       // ws.close();
     };
-  }, [type, handChangeType, handPing, main, socket, setSocket, chart]);
+  }, [
+    type,
+    currentLang,
+    handChangeType,
+    handPing,
+    main,
+    socket,
+    setSocket,
+    chart
+  ]);
 
   useEffect(() => {
     if (!socket) return;
@@ -263,7 +307,7 @@ const KLineChart = ({
         gap={'30'}
         justify={'space-between'}
       >
-        <Box>USDT/DOG:&nbsp;${formatNumber(`${price}`)}</Box>
+        <Box>USDT/DIALECT:&nbsp;${formatNumber(`${price}`)}</Box>
         <Flex
           color={'whiteAlpha.400'}
           gap={4}

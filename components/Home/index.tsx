@@ -10,7 +10,7 @@ import { axiosUrlType } from '@/api/type';
 import { ListData } from '@/types/global';
 import { useUserInfo } from '@/state/userInfo/hook';
 import { formateAddress } from '@/lib';
-import { DOG_ADDRESS, MINT_ADDRESS } from '@/constants';
+import { DIALECT_ADDRESS, POOL_ADDRESS } from '@/constants';
 import { Copy } from '../Copy';
 import Modal from '../Modal';
 import LoadDataContainer from '../LoadDataContainer';
@@ -185,7 +185,7 @@ export const RewardDetailModal = ({
 
   const titleConfig = useMemo<{ [key in EXTRACT_TYPE]: string }>(() => {
     return {
-      DOG: 'DOG Reward Details',
+      DOG: 'DIALECT Reward Details',
       LP: 'Details Of LP Computing Power',
       USDT: 'USDT Reward Details'
     };
@@ -219,7 +219,7 @@ export const RewardDetailModal = ({
         >
           <LoadDataContainer
             isLoading={isLoading}
-            isNoData={!data?.[0].data.list.length}
+            isNoData={!data?.[0].data?.list.length}
             noNeedConnectWallet
           >
             {data?.map((item, index) => {
@@ -232,7 +232,7 @@ export const RewardDetailModal = ({
                     mb={6}
                   >
                     <Center flex={1}>
-                      {dayjs(child.time).format('MM-DD HH:mm:ss')}
+                      {dayjs(child.time * 1000).format('MM-DD HH:mm:ss')}
                     </Center>
                     <Center w={'80px'}>
                       {child.pm === 1 ? '+' : '-'}
@@ -312,13 +312,13 @@ export const Data = () => {
         <Flex justify={'space-between'}>
           <Box>{t('Token Contract')}</Box>
           <Flex gap={2}>
-            {formateAddress(DOG_ADDRESS)} <Copy text="12132" />
+            {formateAddress(DIALECT_ADDRESS)} <Copy text={DIALECT_ADDRESS} />
           </Flex>
         </Flex>
         <Flex justify={'space-between'}>
           <Box>{t('Coinage Contract')}</Box>
           <Flex gap={2}>
-            {formateAddress(MINT_ADDRESS)} <Copy text="12132" />
+            {formateAddress(POOL_ADDRESS)} <Copy text={POOL_ADDRESS} />
           </Flex>
         </Flex>
         <Flex justify={'space-between'}>

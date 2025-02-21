@@ -8,7 +8,10 @@ import {
   APPROVE_AMOUNT,
   BUY_SELL_ADDRESS,
   MINT_ADDRESS,
-  USDT_ADDRESS
+  USDT_ADDRESS,
+  GAS_FEE,
+  DIALECT_ADDRESS,
+  WHITELIST_ADDRESS
 } from '@/constants';
 import {
   useUpdateTxModalStatus,
@@ -65,6 +68,12 @@ const useMint = () => {
     args: [address as Hash]
   });
 
+  const { result: isMarketer } = useSingleCallResult({
+    abi: ERC20,
+    functionName: 'isMarketer',
+    address: DIALECT_ADDRESS,
+    args: [WHITELIST_ADDRESS as Hash]
+  });
   // console.log(userCardInfo, balance);
 
   const updateTxStatux = useUpdateTxModalStatus();
@@ -84,8 +93,8 @@ const useMint = () => {
     const _level = +level.toString();
 
     return {
-      current: nftlist.list[_level === 5 ? 4 : _level ? _level - 1 : 0],
-      next: nftlist.list[_level === 5 ? 4 : _level]
+      current: nftlist.list[_level === 6 ? 5 : _level ? _level - 1 : 0],
+      next: nftlist.list[_level === 6 ? 5 : _level]
     };
   }, [level, nftlist]);
 
@@ -111,6 +120,7 @@ const useMint = () => {
   }, [onOpen, checkSpreadName]);
 
   const comfirBuy = useCallback(async () => {
+    if (!isMarketer) return;
     try {
       updateTxStatux({
         status: 'pending'
@@ -119,7 +129,8 @@ const useMint = () => {
         address: MINT_ADDRESS,
         abi: QUOTA_ABI,
         functionName: 'mint',
-        args: []
+        args: [],
+        value: GAS_FEE as any
       });
       onClose();
       updateTxStatux({
@@ -130,11 +141,11 @@ const useMint = () => {
         status: 'fail'
       });
     }
-  }, [onClose, updateTxStatux, writeContractAsync]);
+  }, [onClose, updateTxStatux, writeContractAsync, isMarketer]);
 
   const text = useMemo(() => {
     if (!level) return t('Mint');
-    if (level === 5) return t('Renewal');
+    if (level === 6) return t('Renewal');
     return t('Upgrade');
   }, [level, t]);
 
@@ -147,8 +158,9 @@ const useMint = () => {
     }
 
     if (
-      data &&
-      data?.list.price > +formatEther(balance.result as never as bigint)
+      userNFTInfo?.next?.price &&
+      +userNFTInfo?.next?.price >
+        +formatEther(balance.result as never as bigint)
     ) {
       return {
         disabled: true,
@@ -160,7 +172,7 @@ const useMint = () => {
       disabled: false,
       text
     };
-  }, [data, text, swapPageT, balance, approvalState]);
+  }, [userNFTInfo, text, swapPageT, balance, approvalState]);
 
   return {
     approvalState,

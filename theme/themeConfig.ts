@@ -18,7 +18,7 @@ import Skeleton from './components/Skeleton';
 import { spinnerTheme } from './components/Spinner';
 
 const config: ThemeConfig = {
-  cssVarPrefix: 'dog',
+  cssVarPrefix: 'dialect',
   // initialColorMode: 'dark',
   useSystemColorMode: false
 };

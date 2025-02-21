@@ -18,7 +18,7 @@ import { locales } from '../../i18n/i18nConfig';
 import Provider from './Provider';
 
 export const metadata = {
-  title: 'Dog World',
+  title: 'DIALECT World',
   description: '',
   viewport:
     'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'

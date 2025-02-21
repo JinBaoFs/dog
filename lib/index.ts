@@ -93,6 +93,22 @@ export const formatNumberWithCommas = (num: number | string): string => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
+export function formatNumberToK(num?: string): string {
+  if (!num || !+num) return '0';
+  if (+num < 1000) {
+    return formatNumber(num.toString());
+  } else if (+num < 1000000) {
+    const kValue = +num / 1000;
+    return kValue.toFixed(2) + 'k';
+  } else if (+num < 1000000000) {
+    const mValue = +num / 1000000;
+    return mValue.toFixed(2) + 'M';
+  } else {
+    const mValue = +num / 1000000000;
+    return mValue.toFixed(2) + 'B';
+  }
+}
+
 // export function formatNumberWithCommas(number: number | string): string {
 //   return Number(number).toLocaleString(
 //     'en-US'

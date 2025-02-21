@@ -4,9 +4,8 @@ import { usePathname } from 'next/navigation';
 import { useChangeLng } from '@/i18n/navigation';
 import IconSvg from '../IconSvg';
 
-const Language = () => {
+export const useLanguage = () => {
   const path = usePathname();
-  const { changeLng } = useChangeLng();
 
   const langConfig = useMemo(() => {
     return [
@@ -34,6 +33,17 @@ const Language = () => {
     const data = langConfig.find(item => item.path === arr[0]);
     return data || langConfig[0];
   }, [langConfig, path]);
+
+  return {
+    currentLang,
+    langConfig
+  };
+};
+
+const Language = () => {
+  const { changeLng } = useChangeLng();
+
+  const { langConfig, currentLang } = useLanguage();
 
   return (
     <VStack

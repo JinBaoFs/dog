@@ -68,6 +68,12 @@ export interface NFTDetail {
   rate: number;
 }
 
+export interface ConfigDetail {
+  buy_coin_rate: string;
+  buy_nft_rate: string;
+  sell_rate: string;
+}
+
 export interface UsdsDetail {
   usds_logo: string;
   usds_name: string;
@@ -197,7 +203,7 @@ export interface ajaxData<T> {
 
 export type TXStatus = 'pending' | 'success' | 'fail';
 
-export type LEVEL = 'N' | 'R' | 'S' | 'SR' | 'SSR';
+export type LEVEL = 'N' | 'R' | 'S' | 'SR' | 'SSR' | 'UR';
 
 export type NFTTYPE = {
   id: number;

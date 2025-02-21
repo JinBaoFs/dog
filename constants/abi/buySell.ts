@@ -39,11 +39,11 @@ export const BUY_SELL_ABI = [
     inputs: [
       {
         internalType: 'address',
-        name: 'newChecker',
+        name: '_marketer',
         type: 'address'
       }
     ],
-    name: 'setChecker',
+    name: 'setMarketer',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function'
@@ -58,7 +58,7 @@ export const BUY_SELL_ABI = [
     ],
     name: 'tokenIn',
     outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
     type: 'function'
   },
   {
@@ -103,7 +103,7 @@ export const BUY_SELL_ABI = [
     ],
     name: 'usdtIn',
     outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
     type: 'function'
   },
   {

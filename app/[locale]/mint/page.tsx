@@ -19,13 +19,15 @@ import Modal from '@/components/Modal';
 import { LEVEL, NFTTYPE } from '@/types/global';
 import useMint from '@/hooks/useMint';
 import { ApproveState } from '@/hooks/useApproveCallback';
+import { TOKEN_SYMBOL } from '@/constants';
 
 const QUOTA: { [key in LEVEL]: string } = {
   N: '0',
-  R: '1000',
-  S: '2000',
-  SR: '4000',
-  SSR: '8000'
+  R: '700',
+  S: '1000',
+  SR: '2000',
+  SSR: '4000',
+  UR: '8000'
 };
 
 const NFTModal = ({
@@ -304,7 +306,8 @@ const Mint = () => {
             <Text>
               4.
               {t(
-                'Hold the NFT to buy the DOG limit, and the purchase limit can be renewed'
+                'Hold the NFT to buy the DIALECT limit, and the purchase limit can be renewed',
+                { name: TOKEN_SYMBOL }
               )}
             </Text>
           </Box>
@@ -322,7 +325,7 @@ const Mint = () => {
                   onClick={() => handApprove()}
                   variant={'outline'}
                 >
-                  {commonT('Aprrove')}
+                  {commonT('Approve')}
                 </Button>
               )}
 
@@ -340,7 +343,7 @@ const Mint = () => {
               data={userNFTInfo.next}
               isOpen={isOpen}
               onClose={onClose}
-              sn={data?.list.order_sn}
+              sn={userNFTInfo.next?.order_sn}
               title={btnStatus?.text}
             />
           </>

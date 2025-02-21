@@ -11,7 +11,8 @@ import {
   PopoverTrigger,
   Portal,
   useDisclosure,
-  VStack
+  VStack,
+  useToast
 } from '@chakra-ui/react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -28,13 +29,14 @@ import { Data, EXTRACT_TYPE, RewardDetailModal, Team } from '@/components/Home';
 import Language from '@/components/Language';
 import Modal from '@/components/Modal';
 import { useUserInfo, useCheckSpreadName } from '@/state/userInfo/hook';
-import { formateAddress, formatNumber } from '@/lib';
+import { formateAddress, formatNumber, formatNumberToK } from '@/lib';
 import { useSingleCallResult } from '@/state/multicall/hooks';
-import { DOG_ADDRESS } from '@/constants';
+import { DIALECT_ADDRESS, TOKEN_SYMBOL } from '@/constants';
 import { ERC20 } from '@/constants/abi/erc20';
 import { ajaxGet, ajaxPost } from '@/api/axios';
 import { axiosUrlType } from '@/api/type';
 import { useGetUserCardInfo } from '@/hooks/useMint';
+import { ajaxData } from '@/types/global';
 
 const RewardModal = ({
   type,
@@ -50,7 +52,7 @@ const RewardModal = ({
     <Modal
       autoFocus={false}
       closeOnOverlayClick={false}
-      header={t('Rewards', { name: type === 'DOG' ? 'DOG' : 'USDT' })}
+      header={t('Rewards', { name: type === 'DOG' ? TOKEN_SYMBOL : 'USDT' })}
       isOpen={isOpen}
       modalIcon="/assets/img/reward.png"
       onClose={onClose}
@@ -78,6 +80,7 @@ const RewardModal = ({
 const Home = () => {
   const account = useAccount();
   const t = useTranslations('Home');
+  const commonT = useTranslations('Common');
   const { isOpen, onClose } = useDisclosure();
   const {
     isOpen: isRewardOpen,
@@ -87,24 +90,35 @@ const Home = () => {
   const searchParams = useSearchParams();
   const userInfo = useUserInfo();
   const checkSpreadName = useCheckSpreadName();
+  const toast = useToast();
 
   const [type, setType] = useState<EXTRACT_TYPE | null>(null);
 
   const { trigger, isMutating } = useSWRMutation(
     'withdraw',
     (url: any, { arg }: { arg: EXTRACT_TYPE }) =>
-      ajaxPost(url as axiosUrlType, {
-        type: arg.toLowerCase()
-      })
+      ajaxPost<ajaxData<{ message: string; status: number }>>(
+        url as axiosUrlType,
+        {
+          type: arg.toLowerCase()
+        }
+      )
   );
 
   const handBtn = useCallback(
     async (type: EXTRACT_TYPE) => {
       checkSpreadName();
       setType(type);
-      trigger(type);
+      const result = await trigger(type);
+      if (result?.status === 200) {
+        toast({
+          position: 'top',
+          title: commonT('Completed'),
+          status: 'success'
+        });
+      }
     },
-    [setType, trigger, checkSpreadName]
+    [setType, trigger, checkSpreadName, toast, commonT]
   );
 
   const handReward = useCallback(
@@ -129,7 +143,7 @@ const Home = () => {
   }, [account]);
 
   const dogBalance = useSingleCallResult({
-    address: DOG_ADDRESS,
+    address: DIALECT_ADDRESS,
     functionName: 'balanceOf',
     abi: ERC20,
     args: [zeroAddress]
@@ -168,7 +182,7 @@ const Home = () => {
             px={2}
           >
             {' '}
-            {t('DOG WORLD')}
+            {t('DIALECT WORLD')}
           </Box>
         </Center>
         <Box
@@ -206,7 +220,7 @@ const Home = () => {
               h={'74px'}
               p={2}
             >
-              <Box fontSize={'sm'}>{t('Rewards', { name: 'DOG' })}</Box>
+              <Box fontSize={'sm'}>{t('Rewards', { name: TOKEN_SYMBOL })}</Box>
               <Box color={'yellow.200'}>
                 {formatNumber(userInfo?.dog_money || '0')}
               </Box>
@@ -222,7 +236,7 @@ const Home = () => {
               >
                 <Box fontSize={'xs'}>{t('Direct Rromotion Rewards')}</Box>
                 <Box fontSize={'sm'}>
-                  {formatNumber(userInfo?.reward_money || '0')}
+                  {formatNumberToK(userInfo?.reward_money || '0')}
                 </Box>
               </VStack>
               <VStack
@@ -232,7 +246,7 @@ const Home = () => {
               >
                 <Box fontSize={'xs'}>{t('Team Rewards')}</Box>
                 <Box fontSize={'sm'}>
-                  {formatNumber(userInfo?.team_money || '0')}
+                  {formatNumberToK(userInfo?.team_money || '0')}
                 </Box>
               </VStack>
               <VStack
@@ -242,7 +256,7 @@ const Home = () => {
               >
                 <Box fontSize={'xs'}>{t('Weighted Reward')}</Box>
                 <Box fontSize={'sm'}>
-                  {formatNumber(userInfo?.weight_money || '0')}
+                  {formatNumberToK(userInfo?.weight_money || '0')}
                 </Box>
               </VStack>
             </Flex>
@@ -329,15 +343,9 @@ const Home = () => {
               >
                 {t('Referral Link')}
               </Center>
-              <Center
-                color={'whiteAlpha.400'}
-                gap={5}
-              >
+              <Center gap={5}>
                 {`${invateLink.slice(0, 10)}...${invateLink.slice(-10)}`}
-                <Copy
-                  color={'whiteAlpha.400'}
-                  text={invateLink}
-                />
+                <Copy text={invateLink} />
               </Center>
             </>
           )}
@@ -414,7 +422,9 @@ const Home = () => {
               justifyContent={'space-between'}
               w={'full'}
             >
-              <Box>{t('Historical DOG Rewards')}</Box>
+              <Box>
+                {t('Historical DIALECT Rewards', { name: TOKEN_SYMBOL })}
+              </Box>
               <Center
                 gap={2}
                 onClick={() => handReward('DOG')}
@@ -489,7 +499,7 @@ const Home = () => {
           mt={'10'}
           p={6}
         >
-          <Center mb={'5'}>{t('DOG Data')}</Center>
+          <Center mb={'5'}>{t('DIALECT Data', { name: TOKEN_SYMBOL })}</Center>
 
           <Flex
             mb={'5'}
@@ -533,7 +543,7 @@ const Home = () => {
                 color={'yellow.200'}
                 fontSize={'md'}
               >
-                {data?.list.holderCount}
+                {data?.list?.holderCount}
               </Box>
             </VStack>
           </Flex>

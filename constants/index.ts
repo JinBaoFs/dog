@@ -1,6 +1,7 @@
 import { Hash } from 'viem';
 import { ChakraStylesConfig } from 'chakra-react-select';
 import { PropsConfigs } from 'chakra-dayzed-datepicker/dist/utils/commonTypes';
+import { parseEther } from 'viem';
 import { ENV_KEY_TYPE } from '@/types/global';
 
 export const MAX_UNIT256 = BigInt(
@@ -38,11 +39,18 @@ export enum BTCChainType {
   TESTNET = 'testnet'
 }
 
+export const GAS_FEE = parseEther('0.002');
+export const TOKEN_SYMBOL = 'DLW';
 export const USDT_ADDRESS = process.env.NEXT_PUBLIC_USDT_ADDRESS as Hash;
-export const DOG_ADDRESS = process.env.NEXT_PUBLIC_DOG_ADDRESS as Hash;
+export const DIALECT_ADDRESS = process.env.NEXT_PUBLIC_DIALECT_ADDRESS as Hash;
 export const BUY_SELL_ADDRESS = process.env
   .NEXT_PUBLIC_BUY_SELL_ADDRESS as Hash;
 export const MINT_ADDRESS = process.env.NEXT_PUBLIC_MINT_ADDRESS as Hash;
+export const POOL_ADDRESS = process.env.NEXT_PUBLIC_MINT_POOL_ADDRESS as Hash;
+export const FACTORY_address = process.env.NEXT_PUBLIC_FACTORY_ADDRESS as Hash;
+export const RECHARGE_ADDRESS = process.env.NEXT_PUBLIC_RECHAGE_ADDRESS as Hash;
+export const WHITELIST_ADDRESS = process.env
+  .NEXT_PUBLIC_WHITELIST_ADDRESS as Hash;
 
 export const DECIMAL = 6;
 
