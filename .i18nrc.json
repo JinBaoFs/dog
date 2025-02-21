@@ -1,0 +1,7 @@
+{
+    "entry": "i18n/locales/en.json",
+    "entryLocale": "zh-Hant",
+    "output": "i18n/locales",
+    "outputLocales": ["jp", "ko", "en"],
+    "translateCode": false
+}

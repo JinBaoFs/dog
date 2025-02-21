@@ -1,0 +1,31 @@
+const REQUEST_API = {
+  config: '/config',
+  getUserInfo: '/user',
+  login: '/auth/login',
+  spread: '/spread',
+  logout: '/logout',
+  spreadList: '/spread_list',
+  dogInfo: '/dog',
+  lpList: '/lp/bill',
+  dogList: '/dog/bill',
+  usdtList: '/usdt/bill',
+  nft: '/nft',
+  withdraw: '/withdraw',
+
+  crowdCreate: '/crowd/create',
+  exchangeList: '/crowd/exchange',
+  link: '/link',
+  orderList: '/order/lst',
+  usdsDetail: '/config/usds_detail',
+  marketList: '/market/lst',
+  marketDetail: '/market/detail',
+  marketDetailKyc: '/detail',
+  assetsLogs: '/market/log',
+  orderCoin: '/order/coin',
+  agreementAbout: '/agreement/about',
+  service: '/protocol',
+  payout: '/payout',
+  ip: '/ip',
+  allNft: '/allNft'
+};
+export default REQUEST_API;

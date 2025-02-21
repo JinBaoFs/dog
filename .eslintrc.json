@@ -1,0 +1,70 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended"
+  ],
+  "overrides": [],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "tsx": "@typescript-eslint/parser"
+    }
+  },
+  "globals": {
+    "window": true
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "import-newlines",
+    "react",
+    "prettier"
+  ],
+  "rules": {
+    "quotes": [
+      2,
+      "single"
+    ],
+    "semi": 2,
+    "react/react-in-jsx-scope": 0,
+    "no-console": 0,
+    "react/display-name": 0,
+    "react/jsx-max-props-per-line": [
+      2,
+      {
+        "maximum": 1
+      }
+    ],
+    "import/newline-after-import": 2,
+    "@typescript-eslint/no-unused-vars": 2,
+    "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/no-var-requires": 0,
+    "react-hooks/rules-of-hooks": 2,
+    "react-hooks/exhaustive-deps": 2,
+    "react/jsx-no-undef": 2,
+    "react/jsx-sort-props": 2,
+    "react/no-unknown-property": 0,
+    "prettier/prettier": 0,
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ]
+      }
+    ]
+  }
+}

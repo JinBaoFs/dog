@@ -1,0 +1,10 @@
+#!/bin/sh
+. "$(dirname "$0")/husky.sh"
+
+[ -n "$CI" ] && exit 0
+
+echo \"git commit trigger husky pre-commit hook\"
+# Format and submit code according to lintstagedrc.js configuration
+npm run lint:lint-staged
+
+# npm run lint:prettier

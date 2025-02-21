@@ -1,0 +1,6 @@
+moveHuskyFiles.js
+node_modules
+dist
+.eslintrc.cjs
+graphql.tsx
+*/icons/name.d.ts
